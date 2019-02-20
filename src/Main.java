@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
@@ -26,15 +28,6 @@ public class Main {
     }
 
     //从尾到头打印链表
-    public class ListNode {
-        int val;
-        ListNode next = null;
-
-        ListNode(int val) {
-            this.val = val;
-        }
-    }
-
     public ArrayList<Integer> printListFromTailToHead(ListNode listNode) {
         ArrayList<Integer> list = new ArrayList<Integer>();
         ArrayList<Integer> result = new ArrayList<Integer>();
@@ -50,16 +43,6 @@ public class Main {
     }
 
     //重建二叉树
-    public class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-
-        TreeNode(int x) {
-            val = x;
-        }
-    }
-
     public TreeNode reConstructBinaryTree(int[] pre, int[] in) {
         //确定根节点
         TreeNode t = null;
@@ -466,35 +449,100 @@ public class Main {
 
     //输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。
     public boolean VerifySquenceOfBST(int[] sequence) {
-        if(sequence==null || sequence.length==0){
+        if (sequence == null || sequence.length == 0) {
             return false;
         }
-        int last = sequence[sequence.length-1];
+        int last = sequence[sequence.length - 1];
         int n = 0;
-        for(;n<sequence.length-1;n++){
-            if(sequence[n]>last){
+        for (; n < sequence.length - 1; n++) {
+            if (sequence[n] > last) {
                 break;
             }
         }
         int i = n;
-        for(;i<sequence.length-1;i++){
-            if(sequence[i]<last){
+        for (; i < sequence.length - 1; i++) {
+            if (sequence[i] < last) {
                 return false;
             }
         }
         boolean l = true;
         boolean r = true;
-        if(n!=0){
+        if (n != 0) {
             int[] f = Arrays.copyOfRange(sequence, 0, n);
             l = VerifySquenceOfBST(f);
         }
-        if(n!=sequence.length-1){
-            int[] b = Arrays.copyOfRange(sequence, n, sequence.length-1);
+        if (n != sequence.length - 1) {
+            int[] b = Arrays.copyOfRange(sequence, n, sequence.length - 1);
             r = VerifySquenceOfBST(b);
         }
         return l && r;
     }
 
-    //
+    //输入一颗二叉树的跟节点和一个整数，打印出二叉树中结点值的和为输入整数的所有路径
+    public class Solution3 {
+        ArrayList<Integer> path = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+
+        public ArrayList<ArrayList<Integer>> FindPath(TreeNode root, int target) {
+            if (root == null) {
+                return paths;
+            }
+            path.add(root.val);
+            if (root.left == null && root.right == null && target == root.val) {
+                paths.add(new ArrayList<>(path));
+            }
+            if (root.left != null && target >= root.val) {
+                FindPath(root.left, target - root.val);
+            }
+            if (root.right != null && target >= root.val) {
+                FindPath(root.right, target - root.val);
+            }
+            path.remove(path.size() - 1);
+            return paths;
+        }
+    }
+
+    //输入一个复杂链表，返回结果为复制后复杂链表的head
+    public class Solution4 {
+        public RandomListNode Clone(RandomListNode pHead) {
+            if(pHead==null){
+                return null;
+            }
+            RandomListNode runner = pHead;
+            RandomListNode copy = null;
+            while (runner!=null){
+                copy = new RandomListNode(runner.label);
+                copy.next = runner.next;
+                runner.next = copy;
+                runner = copy.next;
+            }
+
+            runner = pHead;
+            while (runner!=null){
+                copy = runner.next;
+                copy.random = runner.random==null?null:runner.random.next;
+                runner = runner.next.next;
+            }
+
+            runner = pHead;
+            pHead=runner.next;
+            while (true){
+                copy = runner.next;
+                runner.next = copy.next;
+                runner = copy.next;
+                if(runner==null){
+                    break;
+                }else {
+                    copy.next = runner.next;
+                }
+            }
+            return pHead;
+
+
+
+
+        }
+    }
+
 }
 
