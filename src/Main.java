@@ -1,5 +1,3 @@
-import javax.swing.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
@@ -7,6 +5,8 @@ import java.util.Stack;
 public class Main {
 
     public static void main(String[] args) {
+        Solution5 s = new Solution5();
+        s.Permutation("aas");
 
     }
 
@@ -505,12 +505,12 @@ public class Main {
     //输入一个复杂链表，返回结果为复制后复杂链表的head
     public class Solution4 {
         public RandomListNode Clone(RandomListNode pHead) {
-            if(pHead==null){
+            if (pHead == null) {
                 return null;
             }
             RandomListNode runner = pHead;
             RandomListNode copy = null;
-            while (runner!=null){
+            while (runner != null) {
                 copy = new RandomListNode(runner.label);
                 copy.next = runner.next;
                 runner.next = copy;
@@ -518,31 +518,132 @@ public class Main {
             }
 
             runner = pHead;
-            while (runner!=null){
+            while (runner != null) {
                 copy = runner.next;
-                copy.random = runner.random==null?null:runner.random.next;
+                copy.random = runner.random == null ? null : runner.random.next;
                 runner = runner.next.next;
             }
 
             runner = pHead;
-            pHead=runner.next;
-            while (true){
+            pHead = runner.next;
+            while (true) {
                 copy = runner.next;
                 runner.next = copy.next;
                 runner = copy.next;
-                if(runner==null){
+                if (runner == null) {
                     break;
-                }else {
+                } else {
                     copy.next = runner.next;
                 }
             }
             return pHead;
-
-
-
-
         }
     }
 
+    //输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表
+    public TreeNode Convert(TreeNode pRootOfTree) {
+        if (pRootOfTree == null) {
+            return null;
+        }
+        TreeNode plast = null;
+        plast = convertNode(plast, pRootOfTree);
+        TreeNode result = plast;
+        while (plast.left != null) {
+            plast = plast.left;
+        }
+        return result;
+
+    }
+
+    public TreeNode convertNode(TreeNode plast, TreeNode cur) {
+        if (cur == null) {
+            return null;
+        }
+        if (cur.left != null) {
+            plast = convertNode(plast, cur.left);
+        }
+        cur.left = plast;
+        if (plast != null) {
+            plast.right = cur;
+        }
+        plast = cur;
+        if (cur.right != null) {
+            plast = convertNode(plast, cur.right);
+        }
+        return plast;
+    }
+
+    //输入一个字符串,按字典序打印出该字符串中字符的所有排列
+    public static class Solution5 {
+        ArrayList<String> result = new ArrayList<>();
+
+        public String permutationString(String s, char[] chars) {
+            String s1 = String.valueOf(s);
+            for (char c : chars) {
+                s = s1;
+                s = s + c;
+                if (chars.length != 1) {
+                    char[] chars1 = new char[chars.length-1];
+                    int i = 0;
+                    boolean f = true;
+                    for(char a : chars){
+                        if(a!=c || !f){
+                            chars1[i] = a;
+                            i++;
+                        }else {
+                            f = false;
+                        }
+                    }
+                    s = permutationString(s, chars1);
+                }else {
+                    if(!result.contains(s)){
+                        result.add(s);
+                    }
+                }
+            }
+            return s;
+        }
+
+        public ArrayList<String> Permutation(String str) {
+            if (str == null) {
+                return null;
+            }
+            char[] chars = str.toCharArray();
+            String s = "";
+            permutationString(s, chars);
+            System.out.println(result);
+            return result;
+        }
+    }
+
+    //数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字
+    public int MoreThanHalfNum_Solution(int [] array) {
+        for (int b : array) {
+            int i = 0;
+            for (int a : array) {
+                if (a == b) {
+                    i++;
+                }
+                if (i > array.length / 2) {
+                    return a;
+                }
+            }
+
+        }
+        return 0;
+    }
+
+    //输入n个整数，找出其中最小的K个数
+    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+        ArrayList<Integer> result = new ArrayList<>();
+        if(k>input.length){
+            return null;
+        }
+        Arrays.sort(input);
+        for(int i =0;i<k;i++){
+            result.add(input[i]);
+        }
+        return result;
+    }
 }
 
