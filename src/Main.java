@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Stack;
 
 public class Main {
 
     public static void main(String[] args) {
-        Solution5 s = new Solution5();
-        s.Permutation("aas");
+        System.out.println(FirstNotRepeatingChar("google"));
 
     }
 
@@ -583,20 +583,20 @@ public class Main {
                 s = s1;
                 s = s + c;
                 if (chars.length != 1) {
-                    char[] chars1 = new char[chars.length-1];
+                    char[] chars1 = new char[chars.length - 1];
                     int i = 0;
                     boolean f = true;
-                    for(char a : chars){
-                        if(a!=c || !f){
+                    for (char a : chars) {
+                        if (a != c || !f) {
                             chars1[i] = a;
                             i++;
-                        }else {
+                        } else {
                             f = false;
                         }
                     }
                     s = permutationString(s, chars1);
-                }else {
-                    if(!result.contains(s)){
+                } else {
+                    if (!result.contains(s)) {
                         result.add(s);
                     }
                 }
@@ -617,7 +617,7 @@ public class Main {
     }
 
     //数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字
-    public int MoreThanHalfNum_Solution(int [] array) {
+    public int MoreThanHalfNum_Solution(int[] array) {
         for (int b : array) {
             int i = 0;
             for (int a : array) {
@@ -634,16 +634,147 @@ public class Main {
     }
 
     //输入n个整数，找出其中最小的K个数
-    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+    public ArrayList<Integer> GetLeastNumbers_Solution(int[] input, int k) {
         ArrayList<Integer> result = new ArrayList<>();
-        if(k>input.length){
+        if (k > input.length) {
             return null;
         }
         Arrays.sort(input);
-        for(int i =0;i<k;i++){
+        for (int i = 0; i < k; i++) {
             result.add(input[i]);
         }
         return result;
     }
+
+    //给一个数组，返回它的最大连续子序列的和
+    public static int FindGreatestSumOfSubArray(int[] array) {
+        if (array == null || array.length == 0) {
+            return 0;
+        }
+        int result = 0;
+        for (int i = 0; i < array.length; i++) {
+            int a = array[i];
+            ArrayList<Integer> l = new ArrayList<>();
+            l.add(a);
+            if (i != array.length - 1) {
+                for (int b : Arrays.copyOfRange(array, i + 1, array.length)) {
+                    a = a + b;
+                    l.add(a);
+                }
+            }
+            Collections.sort(l);
+            if (i == 0 || result < l.get(l.size() - 1)) {
+                result = l.get(l.size() - 1);
+            }
+        }
+        return result;
+    }
+
+    //求出1~13的整数中1出现的次数,并算出100~1300的整数中1出现的次数
+    public static int NumberOf1Between1AndN_Solution(int n) {
+        int result = 0;
+        for (int i = 1; i <= n; i++) {
+            char[] chars = String.valueOf(i).toCharArray();
+            for (char c : chars) {
+                if (c == '1') {
+                    result += 1;
+                }
+            }
+        }
+        return result;
+
+    }
+
+    //输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个
+
+    public static class Solution6 {
+        ArrayList<String> l = new ArrayList<>();
+
+        public void printMinNumberStr(String s, int[] numbers) {
+            String nb = s;
+            for (int i = 0; i < numbers.length; i++) {
+                s = nb;
+                s += String.valueOf(numbers[i]);
+                if (numbers.length == 1) {
+                    l.add(s);
+                } else {
+                    int a = numbers[numbers.length - 1];
+                    int[] newnumbers = Arrays.copyOfRange(numbers, 0, numbers.length - 1);
+                    if (numbers.length - 1 != i) {
+                        newnumbers[i] = a;
+                    }
+                    printMinNumberStr(s, newnumbers);
+                }
+            }
+        }
+
+        public String PrintMinNumber(int[] numbers) {
+            if (numbers == null || numbers.length == 0) {
+                return "";
+            }
+            printMinNumberStr("", numbers);
+            Collections.sort(l);
+            return String.valueOf(l.get(0));
+        }
+    }
+
+    //求按从小到大的顺序的第N个丑数
+    public static int GetUglyNumber_Solution(int index) {
+        if (index <= 0) {
+            return 0;
+        }
+        ArrayList<Integer> result = new ArrayList<>();
+        int a = 0;
+        int b = 0;
+        int c = 0;
+        result.add(1);
+        while (result.size() < index) {
+            int d = Math.min(result.get(a) * 2, Math.min(result.get(b) * 3, result.get(c) * 5));
+            result.add(d);
+            if (d == result.get(a) * 2) {
+                a++;
+            }
+            if (d == result.get(b) * 3) {
+                b++;
+            }
+            if (d == result.get(c) * 5) {
+                c++;
+            }
+        }
+        return result.get(result.size() - 1);
+    }
+
+    //在一个字符串(0<=字符串长度<=10000，全部由字母组成)中找到第一个只出现一次的字符,并返回它的位置, 如果没有则返回 -1
+    public static int FirstNotRepeatingChar(String str) {
+        if (str == null || str.length() == 0) {
+            return -1;
+        }
+        ArrayList<Character> l1 = new ArrayList<>();
+        ArrayList<Character> l2 = new ArrayList<>();
+        char[] chars = str.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (l2.contains(chars[i])) {
+                continue;
+            }
+            if (l1.contains(chars[i])) {
+                l2.add(chars[i]);
+                l1.remove(l1.indexOf(chars[i]));
+            } else {
+                l1.add(chars[i]);
+            }
+        }
+        if (l1.size() == 0) {
+            return -1;
+        }
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == l1.get(0)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    //输入一个数组,求出这个数组中的逆序对的总数P
+
 }
 
